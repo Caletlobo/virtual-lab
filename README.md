@@ -1,38 +1,11 @@
-# Man-in-the-Middle Attack on Diffie–Hellman — Virtual Lab
+# MITM on Diffie–Hellman — Virtual Lab
 
-## Experiment
-Demonstrates how an attacker establishes separate shared keys with Alice and Bob,
-intercepts a message, modifies it, and forwards it.
+Interactive virtual lab (HTML/CSS/JS, no build step). Open `index.html` in a browser.
+Needs internet only for the Hanken Grotesk web font.
 
-## Files
-- index.html
-- style.css
-- script.js
-- README.md
+Sections: Aim & Objectives · Theory · Experimental Steps · Interactive Simulation · Quiz · References.
 
-## Run
-Open `index.html` in a modern browser.
+Simulation: edit p, g, a, b, e live; step/play through the normal exchange or the MITM attack;
+the Message lab shows ciphertext at each hop (toy SHA-256 stream cipher, demo only).
 
-## Default test case
-p = 23
-g = 5
-Alice private key = 6
-Bob private key = 15
-Eve private key (Alice side) = 7
-Eve private key (Bob side) = 9
-
-Expected:
-Alice public value = 8
-Bob public value = 19
-Eve public value to Alice = 17
-Eve public value to Bob = 11
-Alice–Eve shared key = 12
-Eve–Bob shared key = 14
-
-Message demonstration:
-Alice sends: Meet me at 10 AM
-Eve may change it to: Meet me at 12 PM
-Bob receives the modified message.
-
-Note: This is an educational virtual-lab simulation illustrating the
-unauthenticated Diffie–Hellman MITM concept.
+Default case: p=23, g=5, a=6, b=15, e=7 → A=8, B=19, E=17; K=2 (normal); K1=12, K2=15 (MITM).
