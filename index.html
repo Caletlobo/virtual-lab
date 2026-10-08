@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>MITM on Diffie–Hellman | Security Lab</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <svg style="display: none;">
+    <defs>
+      <filter id="glow-blue" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3" result="blur" /><feComposite in="SourceGraphic" in2="blur" operator="over" /></filter>
+      <filter id="glow-red" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3" result="blur" /><feComposite in="SourceGraphic" in2="blur" operator="over" /></filter>
+      <filter id="glow-green" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3" result="blur" /><feComposite in="SourceGraphic" in2="blur" operator="over" /></filter>
+    </defs>
+  </svg>
+  <header class="top-header">
+    <div class="brand-container">
+      <div class="brand-icon-wrapper">
+        <div class="brand-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        </div>
+        <div class="brand-icon-glow"></div>
+      </div>
+      <div class="brand-text">
+        <h1>Diffie–Hellman Security Lab</h1>
+        <p>Interactive Cryptography &amp; Network Security</p>
+      </div>
+    </div>
+    <span class="experiment-tag">MITM · Diffie–Hellman</span>
+  </header>
+  <div class="layout">
+    <aside class="sidebar">
+      <h3>Experiment Resources</h3>
+      <nav aria-label="Experiment sections">
+        <button class="nav-btn active" data-section="aim">Aim &amp; Objectives</button>
+        <button class="nav-btn" data-section="theory">Theory</button>
+        <button class="nav-btn" data-section="steps">Experimental Steps</button>
+        <button class="nav-btn" data-section="simulation">Interactive Simulation</button>
+        <button class="nav-btn" data-section="quiz">Assessment / Quiz</button>
+        <button class="nav-btn" data-section="references">References</button>
+      </nav>
+    </aside>
+    <main class="content">
+      
+      <!-- AIM -->
+      <section id="aim" class="section active-section">
+        <div class="section-heading">
+          <span>01</span>
+          <div>
+            <h2>Aim &amp; Objectives</h2>
+            <p>Man-in-the-Middle Attack on Diffie–Hellman</p>
+          </div>
+        </div>
+        <article class="card prose">
+          <h3>Aim</h3>
+          <p>To demonstrate a Man-in-the-Middle (MITM) attack on the Diffie–Hellman key exchange algorithm by illustrating public-value interception, substitution, and the establishment of separate shared secrets.</p>
+          <hr class="soft-rule">
+          <h3>Objectives</h3>
+          <ul class="styled-list">
+            <li>Understand the principles of Diffie–Hellman key agreement.</li>
+            <li>Demonstrate interception and substitution of exchanged public values.</li>
+            <li>Compare normal communication with a MITM-compromised exchange.</li>
+            <li>Observe how separate shared secrets and derived session keys affect message confidentiality and integrity.</li>
+            <li>Identify authentication methods that prevent public-value substitution.</li>
+          </ul>
+          <button class="primary-btn" data-go="theory">Explore Theory →</button>
+        </article>
+      </section>
+
+      <!-- THEORY -->
+      <section id="theory" class="section">
+        <div class="section-heading">
+          <span>02</span>
+          <div>
+            <h2>Theory</h2>
+            <p>Understand the exchange before exploring the attack</p>
+          </div>
+        </div>
+        <div class="card prose">
+          <div class="eyebrow">FOUNDATION</div>
+          <h3>What is Diffie–Hellman key agreement?</h3>
+          <p>Diffie–Hellman allows two parties to independently establish a common <strong>shared secret</strong> over an insecure network. The parties exchange public values, not private exponents. A session key is then derived from the shared secret using a Key Derivation Function (KDF) to enable secure communication.</p>
+          <div class="theory-grid">
+            <div class="info-tile">
+              <b>Public parameters</b>
+              <p>Prime modulus <strong>p</strong> and generator <strong>g</strong> are known to everyone.</p>
+            </div>
+            <div class="info-tile">
+              <b>Private exponents</b>
+              <p>Alice's <strong>a</strong>, Bob's <strong>b</strong>, and Eve's <strong>e</strong> are kept secret by their owners.</p>
+            </div>
+            <div class="info-tile">
+              <b>Public values</b>
+              <p>A = g<sup>a</sup> mod p; B = g<sup>b</sup> mod p; E = g<sup>e</sup> mod p.</p>
+            </div>
+            <div class="info-tile">
+              <b>Shared secret vs session key</b>
+              <p>The shared secret is the DH output. A KDF converts it into key material for an encryption session.</p>
+            </div>
+          </div>
+          <h3>Explore the communication</h3>
+          <div class="tabs">
+            <button class="tab active" data-theory="normal">Normal exchange</button>
+            <button class="tab" data-theory="attack">MITM attack</button>
+          </div>
+          <div id="theoryVisual" class="theory-visual" aria-live="polite"></div>
+          <h3>Why does the attack work?</h3>
+          <p>Unauthenticated Diffie–Hellman does not verify who supplied a public value. An active attacker can replace public values in transit and establish separately keyed connections with each participant. Authenticated key exchange, using verified digital signatures, certificates, or an authenticated pre-shared secret, prevents this substitution.</p>
+          <div class="security-strip">
+            <span><b>Confidentiality</b><small>Messages may be exposed</small></span>
+            <span><b>Integrity</b><small>Messages may be altered</small></span>
+            <span><b>Availability</b><small>Affected if traffic is blocked</small></span>
+          </div>
+          <button class="primary-btn" data-go="steps">View Experimental Steps →</button>
+        </div>
+      </section>
+
+      <!-- STEPS -->
+      <section id="steps" class="section">
+        <div class="section-heading">
+          <span>03</span>
+          <div>
+            <h2>Experimental Steps</h2>
+            <p>Follow the complete virtual experiment</p>
+          </div>
+        </div>
+        <article class="card prose">
+          <ol class="step-list">
+            <li>Enter the public prime modulus <b>p</b> and generator <b>g</b>.</li>
+            <li>Enter Alice's private exponent, Bob's private exponent, and Eve's single private exponent.</li>
+            <li>Calculate Alice's and Bob's public values.</li>
+            <li>Run the normal exchange to observe the matching Diffie–Hellman shared secret.</li>
+            <li>Switch to MITM mode and observe Eve's interception of public values.</li>
+            <li>Observe Eve's substitution of both public values with Eve's public value.</li>
+            <li>Calculate the two separately established shared secrets.</li>
+            <li>Observe how matching or separate session-key material can be derived from those secrets.</li>
+            <li>Send Alice's original message and observe its delivery without interception.</li>
+            <li>In MITM mode, observe Eve's interception, modification, and forwarding of the message.</li>
+            <li>Compare Alice's original message with Bob's received message.</li>
+            <li>Analyze the attack's security implications and authentication-based prevention.</li>
+          </ol>
+          <button class="primary-btn" data-go="simulation">Open Interactive Simulation →</button>
+        </article>
+      </section>
+
+      <!-- SIMULATION -->
+      <section id="simulation" class="section">
+        <div class="section-heading">
+          <span>04</span>
+          <div>
+            <h2>Interactive Simulation</h2>
+            <p>Live network events, guided calculations and message delivery</p>
+          </div>
+        </div>
+
+        <div class="config-console">
+          <div class="console-header">
+            <div class="console-title">
+              <div class="eyebrow">EXPERIMENT SETUP</div>
+              <h3>Configuration Console</h3>
+              <p>Initialize cryptographic parameters to begin the key exchange simulation</p>
+            </div>
+            <button id="loadExample" class="secondary-btn">Load Example</button>
+          </div>
+          
+          <div class="console-grid">
+            <div class="panel public-params">
+              <div class="panel-head">
+                <h4><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg> Public Parameters</h4>
+                <span>Known to all</span>
+              </div>
+              <div class="param-inputs">
+                <label>
+                  <span class="label-text">Prime modulus <i>p</i> <span class="tooltip" title="A large prime number used for modular arithmetic.">ⓘ</span></span>
+                  <input id="prime" type="number" value="23" min="3">
+                </label>
+                <label>
+                  <span class="label-text">Generator <i>g</i> <span class="tooltip" title="A primitive root modulo p.">ⓘ</span></span>
+                  <input id="generator" type="number" value="5" min="2">
+                </label>
+              </div>
+            </div>
+
+            <div class="panel private-keys">
+              <div class="panel-head">
+                <h4><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path></svg> Private Exponents</h4>
+                <span>Kept secret</span>
+              </div>
+              <div class="participant-modules">
+                <div class="participant-module module-alice">
+                  <div class="participant-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></div>
+                  <div class="participant-info">
+                    <span class="name">Alice</span>
+                    <label>Key <i>a</i> <input id="alicePrivate" type="number" value="6" min="1"></label>
+                  </div>
+                </div>
+                
+                <div class="participant-module module-eve">
+                  <div class="participant-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg></div>
+                  <div class="participant-info">
+                    <span class="name">Eve (MITM)</span>
+                    <label>Key <i>e</i> <input id="evePrivate" type="number" value="7" min="1"></label>
+                  </div>
+                </div>
+
+                <div class="participant-module module-bob">
+                  <div class="participant-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></div>
+                  <div class="participant-info">
+                    <span class="name">Bob</span>
+                    <label>Key <i>b</i> <input id="bobPrivate" type="number" value="15" min="1"></label>
+                  </div>
+                </div>
+              </div>
+              <div class="topology-lines">
+                <svg viewBox="0 0 300 12" preserveAspectRatio="none"><path d="M50 6 L250 6" stroke="#dfc9be" stroke-width="2" stroke-dasharray="4 4" fill="none"/></svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="setup-actions console-actions">
+            <button id="startSimulation" class="primary-btn pulse-btn">Initialize Simulation →</button>
+            <button id="resetSimulation" class="secondary-btn">Reset Values</button>
+            <span id="errorMessage" role="alert"></span>
+          </div>
+        </div>
+
+        <div id="dashboard" class="dashboard hidden">
+          <div class="dashboard-top">
+            <div>
+              <div class="eyebrow">LIVE CRYPTOGRAPHY WORKSPACE</div>
+              <h3>Network Exchange Monitor</h3>
+            </div>
+            <span id="statusPill" class="status-pill">READY</span>
+          </div>
+          <div class="mode-switch" role="group" aria-label="Simulation mode">
+            <button class="mode-btn active" data-mode="normal">Without MITM Attack</button>
+            <button class="mode-btn" data-mode="attack">With MITM Attack</button>
+          </div>
+
+          <div class="dashboard-grid">
+            <!-- NETWORK PANEL -->
+            <div class="network-panel">
+              <div class="panel-head">
+                <b>Network topology</b>
+                <span id="networkCaption">Direct key exchange</span>
+              </div>
+              <div class="network-stage" id="networkStage">
+                <svg viewBox="0 0 660 250" aria-label="Animated network exchange" role="img">
+                  <defs>
+                    <linearGradient id="lineGrad">
+                      <stop stop-color="#3b82f6"/>
+                      <stop offset="1" stop-color="#10b981"/>
+                    </linearGradient>
+                    <filter id="packet-glow" x="-50%" y="-50%" width="200%" height="200%">
+                      <feGaussianBlur stdDeviation="4" result="blur" />
+                      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                    </filter>
+                  </defs>
+                  <!-- Base connections -->
+                  <path id="directLine" d="M112 125 H548" class="route route-direct"/>
+                  <path id="leftLine" d="M112 125 H330" class="route route-attack"/>
+                  <path id="rightLine" d="M330 125 H548" class="route route-attack"/>
+                  
+                  <!-- Alice -->
+                  <g transform="translate(58 125)">
+                    <circle class="node-ring" r="51"/>
+                    <circle class="node-core alice" r="34"/>
+                    <text class="node-letter" y="8">A</text>
+                  </g>
+                  <text class="node-name" x="58" y="202">ALICE</text>
+                  
+                  <!-- Eve Grouped for animation -->
+                  <g id="eveWrapper" class="eve-wrapper">
+                    <g id="eveNode" transform="translate(330 125)">
+                      <circle class="node-ring eve-ring" r="51"/>
+                      <circle class="node-core eve" r="34"/>
+                      <text class="node-letter" y="8">E</text>
+                    </g>
+                    <text class="node-name" x="330" y="202" id="eveName">EVE · INTERCEPTOR</text>
+                  </g>
+
+                  <!-- Bob -->
+                  <g transform="translate(602 125)">
+                    <circle class="node-ring" r="51"/>
+                    <circle class="node-core bob" r="34"/>
+                    <text class="node-letter" y="8">B</text>
+                  </g>
+                  <text class="node-name" x="602" y="202">BOB</text>
+                  
+                  <!-- Moving Packet -->
+                  <g id="packetWrapper" opacity="0">
+                    <circle id="packet" r="12" cx="0" cy="125" fill="#3b82f6" filter="url(#packet-glow)"/>
+                    <text id="packetLabel" x="0" y="100" class="packet-label"></text>
+                  </g>
+                </svg>
+              </div>
+              <div class="legend">
+                <span><i class="dot blue"></i>Public value</span>
+                <span><i class="dot red"></i>Interception</span>
+                <span><i class="dot green"></i>Verified calculation</span>
+                <span><i class="dot violet"></i>Session key</span>
+              </div>
+              <div class="live-caption" id="sceneNarration">Start the simulation to watch the exchange.</div>
+            </div>
+
+            <!-- MATH PANEL -->
+            <div class="math-panel">
+              <div class="panel-head">
+                <b>Live mathematical calculation</b>
+                <span id="stepCount">01 / 08</span>
+              </div>
+              <div class="math-content">
+                <div class="eyebrow" id="mathTag">PUBLIC PARAMETERS</div>
+                <h4 id="mathTitle">Preparing the exchange</h4>
+                <div id="mathLines" class="math-lines" aria-live="polite"></div>
+                <p id="mathExplain" class="math-explain"></p>
+              </div>
+            </div>
+          </div>
+
+          <!-- EVENT TIMELINE -->
+          <div class="timeline">
+            <div class="panel-head">
+              <b>Event timeline</b>
+              <span id="timelineCount">0 events</span>
+            </div>
+            <div id="timelineEvents" class="timeline-events"></div>
+          </div>
+
+          <!-- PLAYBAR -->
+          <div class="playbar">
+            <div class="play-controls">
+              <button id="prevStep" class="secondary-btn" title="Previous step">← Previous</button>
+              <button id="playPause" class="primary-btn">▶ Play</button>
+              <button id="nextStep" class="secondary-btn">Next →</button>
+              <button id="replay" class="secondary-btn">↺ Replay</button>
+            </div>
+            <label class="speed-label">Speed 
+              <select id="speed">
+                <option value="2600">0.75×</option>
+                <option value="1900" selected>1×</option>
+                <option value="1100">1.5×</option>
+                <option value="700">2×</option>
+              </select>
+            </label>
+          </div>
+          <div class="progress-track"><div id="progressFill"></div></div>
+
+          <div class="result-grid" id="keyResults"></div>
+
+          <!-- MESSAGE LAB -->
+          <div class="message-lab">
+            <div class="panel-head">
+              <b>Message transmission lab</b>
+              <span>Compare original and delivered messages</span>
+            </div>
+            <div class="message-fields">
+              <label>Alice's Original Message<input id="aliceMessage" value="Meet me at 10 AM" maxlength="160"></label>
+              <label id="eveMessageWrap">Eve's Modified Message<input id="eveMessage" value="Meet me at 11 AM" maxlength="160"></label>
+            </div>
+            <button id="sendMessage" class="primary-btn">Transmit Message →</button>
+            <div id="messageResult" class="message-result" aria-live="polite">Complete the key exchange and transmit a message to see the result.</div>
+            <p class="simulation-disclaimer">Educational demonstration: the message flow illustrates what a party with the appropriate derived session key could do. No production encryption is performed in this browser demo.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- QUIZ -->
+      <section id="quiz" class="section">
+        <div class="section-heading">
+          <span>05</span>
+          <div>
+            <h2>Assessment / Quiz</h2>
+            <p>Check your understanding</p>
+          </div>
+        </div>
+        <div class="card quiz-card">
+          <p class="quiz-intro">Practice questions aligned with concepts in William Stallings' <em>Cryptography and Network Security: Principles and Practice</em>.</p>
+          <div class="quiz-meta">
+            <b id="quizProgressText">Question 1 of 10</b>
+            <span id="quizScore">Score: 0</span>
+          </div>
+          <div class="progress-track"><div id="quizProgress"></div></div>
+          <div id="quizQuestion"></div>
+          <div id="quizFeedback" aria-live="polite"></div>
+          <div class="quiz-actions">
+            <button id="submitAnswer" class="primary-btn">Submit Answer</button>
+            <button id="nextQuestion" class="primary-btn hidden">Next Question →</button>
+            <button id="retryQuiz" class="secondary-btn hidden">Retry Quiz</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- REFERENCES -->
+      <section id="references" class="section">
+        <div class="section-heading">
+          <span>06</span>
+          <div>
+            <h2>References</h2>
+            <p>Further reading and learning resources</p>
+          </div>
+        </div>
+        <article class="card prose">
+          <h3>Textbook</h3>
+          <p>William Stallings, <em>Cryptography and Network Security: Principles and Practice</em>. Relevant topics: key establishment, Diffie–Hellman and authentication.</p>
+          <h3>Online learning</h3>
+          <ul>
+            <li><a href="https://www.geeksforgeeks.org/computer-networks/implementation-diffie-hellman-algorithm/" target="_blank" rel="noopener noreferrer">GeeksforGeeks — Diffie–Hellman algorithm implementation</a></li>
+            <li><a href="https://www.geeksforgeeks.org/python/man-in-the-middle-attack-in-diffie-hellman-key-exchange/" target="_blank" rel="noopener noreferrer">GeeksforGeeks — MITM attack on Diffie–Hellman</a></li>
+          </ul>
+          <p class="reference-note">The explanations and quiz questions in this virtual lab are educational material. Small numeric examples are for teaching only; real cryptographic protocols use much larger parameters and authenticated key exchange.</p>
+        </article>
+      </section>
+
+    </main>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
